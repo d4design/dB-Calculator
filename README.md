@@ -35,7 +35,17 @@ Double-click [DecibelCalculator.pyw](DecibelCalculator.pyw), or run it from a te
 pythonw DecibelCalculator.pyw
 ```
 
-A shortcut ([dB Calculator.lnk](dB%20Calculator.lnk)) and icon ([db_calculator.ico](db_calculator.ico)) are included for pinning to the Start Menu or taskbar.
+### Creating a desktop shortcut
+
+To pin the calculator to the Start Menu, taskbar, or desktop with its icon:
+
+1. Right-click the desktop → **New → Shortcut**.
+2. For the location, enter:
+   ```
+   "PATH\TO\pythonw.exe" "PATH\TO\DecibelCalculator.pyw"
+   ```
+3. Name the shortcut (e.g. "dB Calculator") and finish.
+4. Right-click the new shortcut → **Properties** → **Change Icon...** → browse to [db_calculator.ico](db_calculator.ico) → **OK**.
 
 ## Usage
 
