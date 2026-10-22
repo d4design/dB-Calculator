@@ -5,6 +5,8 @@ Run by double-clicking this file (requires pythonw / a Python install
 with tkinter, which ships with standard CPython on Windows).
 """
 
+import os
+import sys
 import tkinter as tk
 from tkinter import font as tkfont
 
@@ -59,6 +61,7 @@ class DecibelCalculatorApp:
         self.expr_font = tkfont.Font(family='Segoe UI', size=11)
         self.display_font = tkfont.Font(family='Segoe UI', size=36, weight='bold')
         self.unit_font = tkfont.Font(family='Segoe UI', size=12)
+        self.formula_font = tkfont.Font(family='Segoe UI', size=10)
         self.btn_font = tkfont.Font(family='Segoe UI', size=16)
         self.eq_font = tkfont.Font(family='Segoe UI', size=18, weight='bold')
 
@@ -70,8 +73,10 @@ class DecibelCalculatorApp:
         self.expr_font.configure(size=max(8, round(11 * scale)))
         self.display_font.configure(size=max(16, round(36 * scale)))
         self.unit_font.configure(size=max(8, round(12 * scale)))
+        self.formula_font.configure(size=max(7, round(10 * scale)))
         self.btn_font.configure(size=max(9, round(16 * scale)))
         self.eq_font.configure(size=max(10, round(18 * scale)))
+        self.formula_label.configure(wraplength=max(event.width - 32, 100))
 
     def _build_display(self):
         frame = tk.Frame(self.root, bg=DISPLAY_BG)
@@ -94,6 +99,12 @@ class DecibelCalculatorApp:
             font=self.unit_font,
         )
         self.unit_label.pack(fill='x', padx=16)
+
+        self.formula_label = tk.Label(
+            frame, text='', anchor='e', justify='right', bg=DISPLAY_BG, fg=EXPR_FG,
+            font=self.formula_font,
+        )
+        self.formula_label.pack(fill='x', padx=16, pady=(6, 0))
 
     def _build_keypad(self):
         grid = tk.Frame(self.root, bg=BG)
@@ -209,6 +220,7 @@ class DecibelCalculatorApp:
         self.display_label.config(text=self.calc.display)
         self.expr_label.config(text=self.calc.expression)
         self.unit_label.config(text='' if self.calc.error else 'dB')
+        self.formula_label.config(text=self.calc.formula)
 
         for op, btn in self.op_buttons.items():
             if op == self.calc.pending_op and self.calc.new_entry:
@@ -220,7 +232,9 @@ class DecibelCalculatorApp:
 def main():
     root = tk.Tk()
     try:
-        root.iconbitmap(default='')
+        # sys._MEIPASS is set when running from a PyInstaller bundle.
+        base = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+        root.iconbitmap(os.path.join(base, 'db_calculator.ico'))
     except Exception:
         pass
     DecibelCalculatorApp(root)
