@@ -45,6 +45,25 @@ def format_number(value):
     return text
 
 
+def build_formula(op, stored_db, operand2):
+    """Return a human-readable string of the formula used to get the result."""
+    a = format_number(stored_db)
+    b = format_number(operand2)
+    if op == '+':
+        inner = f'10^({a}/10) + 10^({b}/10)'
+    elif op == '-':
+        inner = f'10^({a}/10) − 10^({b}/10)'
+    elif op == '×':
+        inner = f'10^({a}/10) × {b}'
+    elif op == '÷':
+        inner = f'10^({a}/10) ÷ {b}'
+    elif op == '%':
+        inner = f'10^({a}/10) × ({b}/100)'
+    else:
+        return ''
+    return f'10 × Log10({inner})'
+
+
 def apply_op(op, stored_db, operand2):
     """Apply op to stored_db (a dB level) and operand2, returning a dB result."""
     linear1 = db_to_linear(stored_db)
@@ -74,6 +93,7 @@ class DecibelCalculator:
     def reset(self):
         self.display = '0'
         self.expression = ''
+        self.formula = ''
         self.stored_db = None
         self.pending_op = None
         self.just_evaluated = False
@@ -127,6 +147,7 @@ class DecibelCalculator:
         self.stored_db = float(self.display)
         self.pending_op = op
         self.expression = f'{format_number(self.stored_db)} dB {op}'
+        self.formula = ''
         self.new_entry = True
         self.just_evaluated = False
 
@@ -140,6 +161,7 @@ class DecibelCalculator:
         except CalculatorError as exc:
             self.display = 'Error'
             self.expression = str(exc)
+            self.formula = ''
             self.pending_op = None
             self.stored_db = None
             self.just_evaluated = True
@@ -147,6 +169,7 @@ class DecibelCalculator:
             self.error = True
             return
         self.expression = f'{format_number(self.stored_db)} dB {op} {format_number(operand2)} ='
+        self.formula = build_formula(op, self.stored_db, operand2)
         self.display = format_number(result_db)
         self.stored_db = result_db
         self.pending_op = None
